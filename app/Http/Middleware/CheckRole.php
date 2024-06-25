@@ -17,7 +17,7 @@ class CheckRole
     {
 
         if (!$request->user() || !$request->user()->hasRole($role)) {
-            return redirect('home');
+            return redirect()->to('/home');
         }
 
         return $next($request);

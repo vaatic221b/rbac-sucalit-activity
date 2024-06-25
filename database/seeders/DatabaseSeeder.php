@@ -23,13 +23,16 @@ class DatabaseSeeder extends Seeder
 
 
         $adminRole = Role::create(['name' => 'admin']);
-        $userRole = Role::create(['name' => 'user']);
+        $acctgRole = Role::create(['name' => 'bookeeper']);
+        $prodRole = Role::create(['name' => 'assembler']);
 
         $admin = User::create(['name'=>'rab', 'password'=>'usjr1234', 'email' => 'admin@example.com']);
         $admin->roles()->attach($adminRole);
 
-        $user = User::create(['name'=>'jcg', 'password'=>'usjr1234', 'email' => 'user@example.com']);
-        $user->roles()->attach($userRole);
+        $acctgUser = User::create(['name'=>'jcg', 'password'=>'usjr1234', 'email' => 'acctguser@example.com']);
+        $acctgUser->roles()->attach($acctgRole);
 
+        $prodUser = User::create(['name'=>'jlg', 'password'=>'usjr1234', 'email' => 'produser@example.com']);
+        $prodUser->roles()->attach($prodRole);
     }
 }
