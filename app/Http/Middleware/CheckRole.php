@@ -13,13 +13,23 @@ class CheckRole
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
 
-        if (!$request->user() || !$request->user()->hasRole($role)) {
+        dd($request);
+
+        if (!$request->user()) {
             return redirect()->to('/home');
         }
 
-        return $next($request);
+        foreach($roles as $role){
+            if($request->user()->hasRole($role)){
+                return $next($request);
+            } else {
+                return redirect()->to('/home');
+            }
+        }
+
+
     }
 }

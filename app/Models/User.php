@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Role;
+use App\Models\Book;
 
 class User extends Authenticatable
 {
@@ -57,5 +58,9 @@ class User extends Authenticatable
             return $this->roles->contains('name', $role);
         }
         return $this->roles->contains('id', $role->id);
+    }
+
+    public function bookEntry(){
+        return $this->hasMany(Book::class, 'user_id' ,'id');
     }
 }

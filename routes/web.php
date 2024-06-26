@@ -21,7 +21,7 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function(){
     Route::view('/home','homepage');
-    Route::get('/admin', [AdminController::class, 'index'])->name('dash')->middleware('role:admin');
+    Route::get('/admin', [AdminController::class, 'index'])->name('dash')->middleware('role:admin,bookeeper');
     Route::get('/acctg',[UserController::class,'loadAcctgPage'])->middleware('role:bookeeper');
     Route::get('/prod',[UserController::class,'loadAssemblePage'])->middleware('role:assembler');
 });
