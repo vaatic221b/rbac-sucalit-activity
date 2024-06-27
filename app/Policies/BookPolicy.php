@@ -5,23 +5,34 @@ namespace App\Policies;
 use App\Models\Book;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
+use Illuminate\Support\Facades\Auth;
+
 
 class BookPolicy
 {
+
+    // public function before(User $user): bool
+    // {
+
+    //     return $user->roles->flatMap->permissions->contains('name','can_manage');
+
+    // }
+
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user): bool
     {
-        //
+        return true;
     }
 
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, Book $book): bool
+    public function view(User $user): bool
     {
         //
+        return $user->roles->flatMap->permissions->contains('name','can_view');
     }
 
     /**
@@ -29,7 +40,9 @@ class BookPolicy
      */
     public function create(User $user): bool
     {
-        //
+
+        return $user->roles->flatMap->permissions->contains('name','can_create');
+
     }
 
     /**
@@ -38,6 +51,7 @@ class BookPolicy
     public function update(User $user, Book $book): bool
     {
         //
+        return true;
     }
 
     /**
@@ -46,6 +60,7 @@ class BookPolicy
     public function delete(User $user, Book $book): bool
     {
         //
+        return true;
     }
 
     /**
@@ -54,6 +69,7 @@ class BookPolicy
     public function restore(User $user, Book $book): bool
     {
         //
+        return true;
     }
 
     /**
@@ -62,5 +78,6 @@ class BookPolicy
     public function forceDelete(User $user, Book $book): bool
     {
         //
+        return true;
     }
 }

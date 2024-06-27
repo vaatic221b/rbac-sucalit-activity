@@ -4,10 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
+use App\Http\Controllers\BookController;
 
 
 Route::get('/register', [AuthController::class, 'showRegistrationForm'])->name('register');
@@ -20,9 +17,16 @@ Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::middleware('auth')->group(function(){
-    Route::view('/home','homepage');
-    Route::get('/admin', [AdminController::class, 'index'])->name('dash')->middleware('role:admin,bookeeper');
-    Route::get('/acctg',[UserController::class,'loadAcctgPage'])->middleware('role:bookeeper');
-    Route::get('/prod',[UserController::class,'loadAssemblePage'])->middleware('role:assembler');
+    Route::view('/','homepage')->name('home');
+
+    Route::get('/acctg',[UserController::class,'loadAcctgPage'])->middleware('role:admin,bookeeper,auditor,audasst')->name('acctg');
+    Route::get('/prod',[UserController::class,'loadAssemblePage'])->middleware('role:admin,assembler')->name('prod');
+
+    Route::get('/admin', [AdminController::class, 'index'])->name('dash')->middleware('role:admin');
+    Route::get('/admin/users',[AdminController::class,'manageUsers'])->name('usertool')->middleware('role:admin');
+
+    Route::get('/acctg/new',[BookController::class,'newLedgerEntry'])->middleware(['role:admin,bookeeper,auditor']);
+    Route::get('/acctg/view/all',[BookController::class,'showAllLedgers'])->middleware(['role:admin,bookeeper,auditor,audasst'])->name('ledgers');
+    Route::get('/acctg/view/{id}',[BookController::class,'viewLedgerDetails'])->middleware(['role:admin,auditor,audasst'])->name('ledger');
 });
 

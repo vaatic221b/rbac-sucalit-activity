@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use App\Models\Role;
 use App\Models\Book;
+use App\Models\UserInfo;
 
 class User extends Authenticatable
 {
@@ -62,5 +63,9 @@ class User extends Authenticatable
 
     public function bookEntry(){
         return $this->hasMany(Book::class, 'user_id' ,'id');
+    }
+
+    public function userInfo(){
+        return $this->hasOne(UserInfo::class);
     }
 }

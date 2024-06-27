@@ -7,6 +7,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
+use App\Models\Employee;
+use App\Models\Role;
+use App\Models\Permission;
 
 class AuthController extends Controller
 {
@@ -56,7 +59,11 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/home');
+            if (Auth::check())
+                  return redirect()->route('dash');
+            else
+                  return redirect()->intended(route('home'));
+
         }
 
         return back()->withErrors([
