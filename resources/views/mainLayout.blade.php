@@ -26,11 +26,11 @@
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12 text-right">
-                <div>
+            <div class="col text-end">
+                <div class="fs-6">
                     @if(Auth::check())
                        {{ Auth::user()->userInfo->user_firstname.' '.Auth::user()->userInfo->user_lastname }}
-                       <span style="font-weight: bold;">
+                       <span class="fs-6" style="font-weight: bold;">
                        @if(Auth::user()->hasRole('admin'))
                           : Admin User
                        @else
@@ -42,16 +42,16 @@
                  </div>
             </div>
         </div>
-    </div>
 
-    @if(!Auth::check())
-       @yield('auth-content')
-    @else
-       @if(Auth::user()->hasRole('admin'))
-          @yield('admin-content')
-       @else
-          @yield('page-content')
-       @endif
-    @endif
+        <div class="row">
+            <div class="col">
+                @if(!Auth::check())
+                    @yield('auth-content')
+                @else
+                    @yield('page-content')
+                @endif
+            </div>
+        </div>
+    </div>
 </body>
 </html>

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 use App\Models\User;
-use App\Models\Employee;
+use App\Models\UserInfo;
 use App\Models\Role;
 use App\Models\Permission;
 
@@ -31,15 +31,24 @@ class AuthController extends Controller
         }
 
         $request->validate([
+            'firstname'=> 'required|string|max:255',
+            'lastname'=> 'required|string|max:255',
             'name' => 'required|string|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'email' => $email,
             'password' => Hash::make($request->password),
         ]);
+
+        UserInfo::create([
+            'user_firstname' => $request->firstname,
+            'user_lastname' => $request->lastname,
+            'user_id' => $user->id
+        ]);
+
 
         return redirect()->route('login');
     }
@@ -59,9 +68,9 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            if (Auth::check())
-                  return redirect()->route('dash');
-            else
+            // if (Auth::check())
+                //   return redirect()->route('dash');
+            // else
                   return redirect()->intended(route('home'));
 
         }
