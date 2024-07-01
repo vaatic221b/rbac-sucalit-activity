@@ -7,9 +7,8 @@ use App\Models\Role;
 use App\Models\Book;
 use App\Models\UserInfo;
 use App\Models\Permission;
-
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,95 +17,94 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Ensure roles are created without duplicates
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $acctgRole = Role::firstOrCreate(['name' => 'bookeeper']);
+        $acctgAuditRole = Role::firstOrCreate(['name' => 'auditor']);
+        $acctgAudAsstRole = Role::firstOrCreate(['name' => 'audasst']);
+        $prodRole = Role::firstOrCreate(['name' => 'assembler']);
 
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        // Ensure permissions are created without duplicates
+        $createPermission = Permission::firstOrCreate(['name' => 'can_create']);
+        $updatePermission = Permission::firstOrCreate(['name' => 'can_update']);
+        $viewAllPermission = Permission::firstOrCreate(['name' => 'can_view_all']);
+        $viewDetailPermission = Permission::firstOrCreate(['name' => 'can_view_detail']);
+        $deletePermission = Permission::firstOrCreate(['name' => 'can_delete']);
+        $adminPermission = Permission::firstOrCreate(['name' => 'can_manage']);
 
+        // Attach permissions to roles
+        $adminRole->permissions()->syncWithoutDetaching([$adminPermission->id]);
+        $acctgRole->permissions()->syncWithoutDetaching([$createPermission->id, $updatePermission->id]);
+        $acctgAuditRole->permissions()->syncWithoutDetaching([$viewAllPermission->id, $viewDetailPermission->id]);
+        $acctgAudAsstRole->permissions()->syncWithoutDetaching([$viewAllPermission->id]);
+        $prodRole->permissions()->syncWithoutDetaching([$viewAllPermission->id, $createPermission->id, $updatePermission->id]);
 
-        $adminRole      = Role::create(['name' => 'admin']);
-        $acctgRole      = Role::create(['name' => 'bookeeper']);
-        $acctgAuditRole = Role::create(['name'=>'auditor']);
-        $acctgAudAsstRole = Role::create(['name'=>'audasst']);
-        $prodRole       = Role::create(['name' => 'assembler']);
+        // Ensure users are created without duplicates
+        $admin = User::firstOrCreate(
+            ['email' => 'admin@example.com'],
+            ['name' => 'rab', 'password' => Hash::make('usjr1234')]
+        );
+        $admin->roles()->syncWithoutDetaching([$adminRole->id]);
 
-        $createPermission = Permission::create(['name'=>'can_create']);
-        $updatePermission = Permission::create(['name'=>'can_update']);
-        $viewAllPermission   = Permission::create(['name'=>'can_view_all']);
-        $viewDetailPermission = Permission::create(['name'=>'can_view_detail']);
-        $deletePermission = Permission::create(['name'=>'can_delete']);
-        $adminPermission  = Permission::create(['name'=>'can_manage']);
+        $acctgUser = User::firstOrCreate(
+            ['email' => 'acctguser@example.com'],
+            ['name' => 'jcg', 'password' => Hash::make('usjr1234')]
+        );
+        $acctgUser->roles()->syncWithoutDetaching([$acctgRole->id]);
 
-        $adminRole->permissions()->attach($adminPermission);
-        $acctgRole->permissions()->attach($createPermission);
-        $acctgRole->permissions()->attach($updatePermission);
-        $acctgAuditRole->permissions()->attach($viewAllPermission);
-        $acctgAuditRole->permissions()->attach($viewDetailPermission);
-        $acctgAudAsstRole->permissions()->attach($viewAllPermission);
-        $prodRole->permissions()->attach($viewAllPermission);
-        $prodRole->permissions()->attach($createPermission);
-        $prodRole->permissions()->attach($updatePermission);
+        $auditorUser = User::firstOrCreate(
+            ['email' => 'acctgauditoruser@example.com'],
+            ['name' => 'vfp', 'password' => Hash::make('usjr1234')]
+        );
+        $auditorUser->roles()->syncWithoutDetaching([$acctgAuditRole->id]);
 
-        $admin = User::create(['name'=>'rab', 'password'=>'usjr1234', 'email' => 'admin@example.com']);
-        $admin->roles()->attach($adminRole);
+        $auditorAsstUser = User::firstOrCreate(
+            ['email' => 'acctgauditorasst@example.com'],
+            ['name' => 'ldm', 'password' => Hash::make('usjr1234')]
+        );
+        $auditorAsstUser->roles()->syncWithoutDetaching([$acctgAudAsstRole->id]);
 
-        $acctgUser = User::create(['name'=>'jcg', 'password'=>'usjr1234', 'email' => 'acctguser@example.com']);
-        $acctgUser->roles()->attach($acctgRole);
+        $prodUser = User::firstOrCreate(
+            ['email' => 'produser@example.com'],
+            ['name' => 'jlg', 'password' => Hash::make('usjr1234')]
+        );
+        $prodUser->roles()->syncWithoutDetaching([$prodRole->id]);
 
-        $auditorUser = User::create(['name'=>'vfp', 'password'=>'usjr1234', 'email' => 'acctgauditoruser@example.com']);
-        $auditorUser->roles()->attach($acctgAuditRole);
+        // Ensure user info is created without duplicates
+        UserInfo::firstOrCreate(
+            ['user_id' => $admin->id],
+            ['user_firstname' => 'Roderick', 'user_lastname' => 'Bandalan']
+        );
 
-        $auditorAsstUser = User::create(['name'=>'ldm', 'password'=>'usjr1234', 'email' => 'acctgauditorasst@example.com']);
-        $auditorAsstUser->roles()->attach($acctgAudAsstRole);
+        UserInfo::firstOrCreate(
+            ['user_id' => $acctgUser->id],
+            ['user_firstname' => 'Jeoffrey', 'user_lastname' => 'Gudio']
+        );
 
-        $prodUser = User::create(['name'=>'jlg', 'password'=>'usjr1234', 'email' => 'produser@example.com']);
-        $prodUser->roles()->attach($prodRole);
+        UserInfo::firstOrCreate(
+            ['user_id' => $prodUser->id],
+            ['user_firstname' => 'John Leeroy', 'user_lastname' => 'Gadiane']
+        );
 
-        UserInfo::create([
-            'user_firstname'=>'Roderick',
-            'user_lastname'=>'Bandalan',
-            'user_id'=>$admin->id
-        ]);
-        // $firstEmployee->user_id = $admin->id;
+        UserInfo::firstOrCreate(
+            ['user_id' => $auditorAsstUser->id],
+            ['user_firstname' => 'Lorna', 'user_lastname' => 'Miro']
+        );
 
-        UserInfo::create([
-            'user_firstname'=>'Jeoffrey',
-            'user_lastname'=>'Gudio',
-            'user_id'=>$acctgUser->id
-        ]);
-        // $firstEmployee->user_id = $acctgUser->id;
+        UserInfo::firstOrCreate(
+            ['user_id' => $auditorUser->id],
+            ['user_firstname' => 'Vicente', 'user_lastname' => 'Patalita III']
+        );
 
-        UserInfo::create([
-            'user_firstname'=>'John Leeroy',
-            'user_lastname'=>'Gadiane',
-            'user_id'=>$prodUser->id
-        ]);
-        // $firstEmployee->user_id = $prodUser->id;
-        UserInfo::create([
-            'user_firstname'=>'Lorna',
-            'user_lastname'=>'Miro',
-            'user_id'=>$auditorAsstUser->id
-        ]);
+        // Ensure books are created without duplicates
+        Book::firstOrCreate(
+            ['entry' => 'Initial Balance', 'user_id' => $acctgUser->id],
+            ['amount' => 2500.90]
+        );
 
-        UserInfo::create([
-            'user_firstname'=>'Vicente',
-            'user_lastname'=>'Patalita III',
-            'user_id'=>$auditorUser->id
-        ]);
-        // $firstEmployee->user_id = $auditorUser->id;
-
-        Book::create([
-            'entry'=>'Initial Balance',
-            'amount'=>2500.90,
-            'user_id'=>$acctgUser->id,
-        ]);
-
-        Book::create([
-            'entry'=>'Second Deposit',
-            'amount'=>20025.90,
-            'user_id'=>$acctgUser->id
-        ]);
+        Book::firstOrCreate(
+            ['entry' => 'Second Deposit', 'user_id' => $acctgUser->id],
+            ['amount' => 20025.90]
+        );
     }
 }
