@@ -40,6 +40,7 @@ class BookController extends Controller
 
     public function viewLedgerDetails($id) {
         $response = Gate::inspect('view');
+        // Gate::authorize('view');
 
         if ($response->allowed()){
             $ledger = Book::find($id);
@@ -50,6 +51,7 @@ class BookController extends Controller
 
             return view('acctg.books.viewLedger')->with(compact('ledger'))->with(['encoder'=> $encoderName[0]]);
         } else {
+            // echo $response->message();
             return redirect()->back();
         }
     }

@@ -16,14 +16,14 @@
                 @csrf
                 <div class="formgroupp">
                     <label class="auth-labels">Username</label>
-                    <input type="text" name="name" value="{{ old('name') }}" required class="auth-textbox form-control">
+                    <input type="text" name="name" value="{{ old('name') }}" required class="auth-textbox form-control border border-dark">
                     @error('name')
                         <span>{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="formgroup">
                     <label class="auth-labels">Password</label>
-                    <input type="password" name="password" required class="auth-textbox form-control">
+                    <input type="password" name="password" required class="auth-textbox form-control border border-dark">
                     @error('password')
                         <span>{{ $message }}</span>
                     @enderror

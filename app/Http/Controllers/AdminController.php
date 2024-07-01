@@ -16,7 +16,7 @@ class AdminController extends Controller
     }
 
     public function manageUsers(){
-        $users = User::select('id','name','email')->get();
+        $users = User::select('id','name','email')->paginate(10);
         $roles = Role::all();
         $permissions = Permission::all();
 
