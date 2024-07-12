@@ -31,18 +31,29 @@ class AdminController extends Controller
 
     public function editUser(User $user)
     {
-        $roles = Role::all();
+        $roles = Role::with('permissions')->get(); // Load roles with their permissions
         return view('admin.editUser', compact('user', 'roles'));
     }
 
     public function updateUser(Request $request, User $user)
     {
         $request->validate([
-            'roles' => 'required|array',
+            'roles' => 'nullable|array', // roles can be nullable or array
         ]);
-
-        $user->roles()->sync($request->roles);
-
+    
+        // Get selected roles or an empty array
+        $roles = $request->input('roles', []);
+    
+        if (empty($roles)) {
+            // If no roles selected (including "None" option), detach all roles from the user
+            $user->roles()->detach();
+        } else {
+            // Update roles normally
+            $user->roles()->sync($roles);
+        }
+    
         return redirect()->route('usertool')->with('success', 'User roles updated successfully');
     }
+    
+    
 }

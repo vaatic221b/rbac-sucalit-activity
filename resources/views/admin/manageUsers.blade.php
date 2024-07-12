@@ -32,9 +32,13 @@
                                 <td>{{ $user->userInfo->user_firstname.' '.$user->userInfo->user_lastname }}</td>
                                 <td>{{ $user->email }}</td>
                                 <td>
-                                    @foreach ($user->roles as $role)
-                                        {{ $role->name }}@if(!$loop->last), @endif
-                                    @endforeach
+                                    @if($user->roles->isEmpty())
+                                        user
+                                    @else
+                                        @foreach ($user->roles as $role)
+                                            {{ $role->name }}@if(!$loop->last), @endif
+                                        @endforeach
+                                    @endif
                                 </td>
                                 <td>
                                     <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
